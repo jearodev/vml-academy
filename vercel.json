@@ -1,0 +1,31 @@
+{
+  "version": 2,
+  "public": true,
+  "builds": [
+    {
+      "src": "server/server.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": { "distDir": "build" }
+    }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/server/server.js" },
+    { "src": "/static/(.*)", "dest": "/static/$1" },
+    { "src": "/images/(.*)", "dest": "/images/$1" },
+    { "src": "/programa1", "dest": "/index.html" },
+    { "src": "/programa2", "dest": "/index.html" },
+    { "src": "/programa3", "dest": "/index.html" },
+    { "src": "/programa4", "dest": "/index.html" },
+    { "src": "/programa5", "dest": "/index.html" },
+    { "src": "/programa6", "dest": "/index.html" },
+    { "src": "/programa7", "dest": "/index.html" },
+    { "src": "/programa8", "dest": "/index.html" },
+    { "src": "/programa9", "dest": "/index.html" },
+    { "src": "/programa10", "dest": "/index.html" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
+}
