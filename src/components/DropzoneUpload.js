@@ -12,13 +12,14 @@ const DropzoneUpload = ({ onFileDrop }) => {
 
     return (
         <div className="form-group dropzonestyle">
-            <label htmlFor="file">Certificado de avance curricular (PDF, JPG, PNG):</label>
+            <label htmlFor="file">Certificado de avance curricular (PDF, JPG, PNG, WEBP):</label>
             <Dropzone 
                 onDrop={handleDrop} 
                 accept={{
                     'application/pdf': ['.pdf'],
                     'image/jpeg': ['.jpg', '.jpeg'],
-                    'image/png': ['.png']
+                    'image/png': ['.png'],
+                    'image/webp': ['.webp'],
                 }}
             >
                 {({ getRootProps, getInputProps }) => (

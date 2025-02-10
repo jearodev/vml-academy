@@ -24,12 +24,12 @@ function App() {
                     <>
                         <Banner />
                         <ProgramInfo />
+                        <Equipo />
                         <MapComponent />
                         <Courses />
                         <RegistrationForm />
                     </>
                 } />
-                <Route path="/equipo" element={<Equipo />} />
                 <Route path="/terminos" element={<Terminos />} />
                 <Route path="/registros" element={<UsersList />} />
             </Routes>
