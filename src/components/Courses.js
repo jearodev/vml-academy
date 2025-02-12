@@ -14,13 +14,13 @@ const courses = [
                 name: 'Vicente Carrasco',
                 job: 'Chief Executive Officer',
                 linkedin: 'https://www.linkedin.com/in/vicente-carrasco-6978131/',
-                image: '/images/personas/vicente_carrasco.jpg'
+                image: '/images/personas/vicente_carrasco.webp'
             },
             {
                 name: 'Paloma Opaso',
                 job: 'Chief People Officer',
                 linkedin: 'https://www.linkedin.com/in/paloma-opaso-unwin-209068a/',
-                image: '/images/personas/paloma_opaso.jpg'
+                image: '/images/personas/paloma_opaso.webp'
             }
         ]
     },
@@ -35,13 +35,13 @@ const courses = [
                 name: 'Oriol Albella',
                 job: 'Chief Operations Office',
                 linkedin: 'https://www.linkedin.com/in/ualbella/',
-                image: '/images/personas/oriol_albella.jpg'
+                image: '/images/personas/oriol_albella.webp'
             },
             {
                 name: 'Francisca Vidal',
                 job: 'Directora de Cuentas',
                 linkedin: 'https://www.linkedin.com/in/francisca-javiera-vidal-trugeda-700a1b51/',
-                image: '/images/personas/javiera_vidal.jpg'
+                image: '/images/personas/francisca_vidal.webp'
             }
         ]
     },
@@ -56,13 +56,13 @@ const courses = [
                 name: 'Jose Antonio Varas',
                 job: 'Chief Strategy Officer',
                 linkedin: 'https://www.linkedin.com/in/joseantoniovaras/',
-                image: '/images/personas/jose_antonio_varas.jpg'
+                image: '/images/personas/jose_antonio_varas.webp'
             },
             {
                 name: 'Sara Grandon',
                 job: 'Directora de Planificación Estratégica',
                 linkedin: 'https://www.linkedin.com/in/saragrandonm/',
-                image: '/images/personas/sara_grandon.jpg'
+                image: '/images/personas/sara_grandon.webp'
             }
         ]
     },
@@ -77,7 +77,7 @@ const courses = [
                 name: 'Raimundo Undurraga',
                 job: 'Chief Creative Officer',
                 linkedin: 'https://www.linkedin.com/in/raimundo-undurraga/',
-                image: '/images/personas/raimundo_undurraga.jpg'
+                image: '/images/personas/raimundo_undurraga.webp'
             }
         ]
     },
@@ -92,7 +92,7 @@ const courses = [
                 name: 'Jaime Cano',
                 job: 'Director Creativo',
                 linkedin: 'https://www.linkedin.com/in/jaime-cano-41497688/',
-                image: '/images/personas/jaime_cano.jpg'
+                image: '/images/personas/jaime_cano.webp'
             }
         ]
     },
@@ -108,13 +108,13 @@ const courses = [
                 name: 'Andrés Fritz',
                 job: 'Director de Contenidos',
                 linkedin: 'https://www.linkedin.com/in/andresfritz/',
-                image: '/images/personas/andres_fritz.jpg'
+                image: '/images/personas/andres_fritz.webp'
             },
             {
                 name: 'Francisca Miranda',
                 job: 'Directora de Contenidos',
                 linkedin: 'https://www.linkedin.com/in/kikamirandasilva/',
-                image: '/images/personas/francisca_miranda.jpg'
+                image: '/images/personas/francisca_miranda.webp'
             },
         ]
     },
@@ -129,13 +129,13 @@ const courses = [
                 name: 'Loreto González',
                 job: 'Directora de Producción',
                 linkedin: 'https://www.linkedin.com/in/m-loreto-gonz%C3%A1lez-guerrero-405890108/',
-                image: '/images/personas/loreto_gonzalez.jpg'
+                image: '/images/personas/loreto_gonzalez.webp'
             },
             {
                 name: 'Andrés Villanova',
                 job: 'Director de Martech',
                 linkedin: 'https://www.linkedin.com/in/andresvillanova/',
-                image: '/images/personas/andres_villanova.jpg'
+                image: '/images/personas/andres_villanova.webp'
             },
         ]
     },
@@ -150,13 +150,13 @@ const courses = [
                 name: 'Constanza Quezada',
                 job: 'Directora de Consultoría',
                 linkedin: 'https://www.linkedin.com/in/constanzaquezada/',
-                image: '/images/personas/andres_villanova.jpg'
+                image: '/images/personas/constanza_quezada.webp'
             },
             {
                 name: 'Ricardo López',
                 job: 'Director de BAV ',
                 linkedin: 'https://www.linkedin.com/in/ricardojavierlopezmo/',
-                image: '/images/personas/andres_villanova.jpg'
+                image: '/images/personas/ricardo_lopez.webp'
             },
         ]
     },
@@ -212,7 +212,7 @@ const Courses = () => {
                                         <strong>Profesores:</strong>
                                         <div className="d-flex mt-2 flex-wrap justify-content-center">
                                             {course.teachers.map((teacher, teacherIndex) => (
-                                                <div key={teacherIndex} className="me-3 mb-2 text-center" style={{ minWidth: "100px" }}>
+                                                <div key={teacherIndex} className="me-3 mb-2 mt-2 text-center" style={{ minWidth: "100px" }}>
                                                     <a
                                                         href={teacher.linkedin}
                                                         target="_blank"
@@ -223,7 +223,7 @@ const Courses = () => {
                                                             src={teacher.image || "/placeholder.svg"}
                                                             alt={teacher.name}
                                                             roundedCircle
-                                                            style={{ width: "60px", height: "60px", objectFit: "cover" }}
+                                                            style={{ width: "80px", height: "80px", objectFit: "cover", aspectRatio: "16/9" }}
                                                         />
                                                         <div style={{ fontSize: "0.8rem", fontWeight: "bold", marginTop: "5px" }}>
                                                             {teacher.name}

@@ -8,21 +8,21 @@ const equipo = [
         name: "Vicente Carrasco",
         job: "Chief Executive Officer",
         linkedin: "https://www.linkedin.com/in/vicente-carrasco-6978131/",
-        image: "/images/personas/vicente_carrasco.jpg",
+        image: "/images/personas/vicente_carrasco.webp",
         quote: "No es el mejor producto el que triunfa, sino el que mejor se comunica."
     },
     {
         name: "Paloma Opaso",
         job: "Chief People Officer",
         linkedin: "https://www.linkedin.com/in/paloma-opaso-unwin-209068a/",
-        image: "/images/personas/paloma_opaso.jpg",
+        image: "/images/personas/paloma_opaso.webp",
         quote: "El marketing no se trata de los productos que vendes, sino de las historias que cuentas."
     },
     {
         name: 'Oriol Albella',
         job: 'Chief Operations Office',
         linkedin: 'https://www.linkedin.com/in/ualbella/',
-        image: '/images/personas/oriol_albella.jpg',
+        image: '/images/personas/oriol_albella.webp',
         quote: "Las marcas no compiten por atención, compiten por emociones."
     }
 ]
