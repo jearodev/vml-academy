@@ -10,13 +10,13 @@ require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-const s3 = new S3Client({
-  region: process.env.AWS_REGION,
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  },
-});
+// const s3 = new S3Client({
+//   region: process.env.AWS_REGION,
+//   credentials: {
+//     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+//     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+//   },
+// });
 
 const uri = process.env.MONGO_URI;
 const client = new MongoClient(uri, {
@@ -94,15 +94,42 @@ app.get('/api/registros', async (req, res) => {
   try {
     const collection = client.db("personas").collection("vmlacademy");
     const files = await collection.find({}).toArray();
-    console.log('Datos recuperados:', files); 
-    res.json(files); 
+    console.log('Datos recuperados:', files);
+    res.json(files);
   } catch (error) {
     console.error('Error al recuperar datos de MongoDB:', error);
     res.status(500).send('Error al recuperar datos.');
   }
 });
 
+app.post("/api/test-mongo-connection", async (req, res) => {
+  try {
+    await client.connect()
+    const collection = client.db("personas").collection("vmlacademy")
 
+    const testDoc = {
+      fileName: "test_file.txt",
+      filePath: "https://example.com/test_file.txt",
+      uploadDate: new Date(),
+      userData: {
+        firstName: "Test",
+        lastName: "User",
+        email: "test@example.com",
+        university: "Test University",
+        major: "Test Major",
+        motivation: "Testing MongoDB insertion",
+      },
+    }
+
+    const result = await collection.insertOne(testDoc)
+    res.status(200).json({ message: "Test document successfully inserted into MongoDB!" })
+  } catch (error) {
+    console.error("Error connecting to MongoDB:", error)
+    res.status(500).json({ error: "Failed to connect to MongoDB", details: error.message })
+  } finally {
+    await client.close()
+  }
+})
 
 app.use(express.static(path.join(__dirname, '../build')));
 
