@@ -25,7 +25,7 @@ const DropzoneUpload = ({ onFileDrop }) => {
                 {({ getRootProps, getInputProps }) => (
                     <div {...getRootProps()} style={{ border: '2px dashed #007bff', padding: '20px', cursor: 'pointer' }}>
                         <input {...getInputProps()} />
-                        <p>Arrastrá tu archivo acá o hacé clic para subirlo. Tamaño máximo 5MB</p>
+                        <p>Arrastra tu archivo acá o haz clic para subirlo. Tamaño máximo 5MB</p>
                     </div>
                 )}
             </Dropzone>

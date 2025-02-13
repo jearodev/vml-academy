@@ -24,9 +24,9 @@ function App() {
                     <>
                         <Banner />
                         <ProgramInfo />
-                        <Equipo />
                         <MapComponent />
                         <Courses />
+                        <Equipo />
                         <RegistrationForm />
                     </>
                 } />

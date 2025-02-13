@@ -33,7 +33,7 @@ const courses = [
         teachers: [
             {
                 name: 'Oriol Albella',
-                job: 'Chief Operations Office',
+                job: 'Chief Operations Officer',
                 linkedin: 'https://www.linkedin.com/in/ualbella/',
                 image: '/images/personas/oriol_albella.webp'
             },
@@ -78,6 +78,12 @@ const courses = [
                 job: 'Chief Creative Officer',
                 linkedin: 'https://www.linkedin.com/in/raimundo-undurraga/',
                 image: '/images/personas/raimundo_undurraga.webp'
+            },
+            {
+                name: 'Daniela Cabezas',
+                job: 'Redactora',
+                linkedin: 'https://www.linkedin.com/in/raimundo-undurraga/',
+                image: '/images/personas/daniela_cabezas.webp'
             }
         ]
     },
@@ -93,7 +99,13 @@ const courses = [
                 job: 'Director Creativo',
                 linkedin: 'https://www.linkedin.com/in/jaime-cano-41497688/',
                 image: '/images/personas/jaime_cano.webp'
-            }
+            },
+            {
+                name: 'Natalia Rodríguez',
+                job: 'Directora de Arte',
+                linkedin: 'https://www.linkedin.com/in/jaime-cano-41497688/',
+                image: '/images/personas/natalia_rodriguez.webp'
+            },
         ]
     },
 
@@ -209,7 +221,7 @@ const Courses = () => {
                                         <strong>Fecha de inicio:</strong> {course.startDate}
                                     </div>
                                     <div className="mb-3">
-                                        <strong>Profesores:</strong>
+                                        <strong>Imparte:</strong>
                                         <div className="d-flex mt-2 flex-wrap justify-content-center">
                                             {course.teachers.map((teacher, teacherIndex) => (
                                                 <div key={teacherIndex} className="me-3 mb-2 mt-2 text-center" style={{ minWidth: "100px" }}>
