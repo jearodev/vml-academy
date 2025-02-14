@@ -10,13 +10,13 @@ require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-// const s3 = new S3Client({
-//   region: process.env.AWS_REGION,
-//   credentials: {
-//     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-//     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-//   },
-// });
+const s3 = new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  },
+});
 
 const uri = process.env.MONGO_URI;
 const client = new MongoClient(uri, {
@@ -40,7 +40,7 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 const corsOptions = {
-  origin: ['http://localhost:3000', 'https://vmlacademy.vercel.app', 'https://www.vmlacademy.uy'],
+  origin: ['http://localhost:3000', 'http://localhost:5000', 'https://vml-academy-cmiu.vercel.app', 'https://www.vmlacademy.cl'],
   optionsSuccessStatus: 200,
 };
 

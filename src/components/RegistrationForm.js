@@ -3,12 +3,12 @@ import axios from 'axios';
 import DropzoneUpload from './DropzoneUpload';
 import useIntersectionObserver from '../hooks/useIntersectionObserver';
 import { Link } from 'react-router-dom';
-import Swal from 'sweetalert2';  
+import Swal from 'sweetalert2';
 
 const RegistrationForm = () => {
     const [isVisible, setIsVisible] = useState(false);
-    const [selectedFile, setSelectedFile] = useState(null); 
-    const [isSubmitting, setIsSubmitting] = useState(false); 
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const ref = useIntersectionObserver(setIsVisible);
 
     const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
@@ -27,8 +27,8 @@ const RegistrationForm = () => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        setIsSubmitting(true); 
-        
+        setIsSubmitting(true);
+
         const formData = new FormData(event.target);
 
         // Agregar archivo al formulario
@@ -42,7 +42,7 @@ const RegistrationForm = () => {
         }
 
         // Utilizar la variable de entorno para la URL del backend producción
-        const apiUrl = "https://vmlacademy.vercel.app/api";
+        const apiUrl = "https://vml-academy-cmiu.vercel.app/api";
         //const apiUrl = "http://localhost:5000/api";
 
         axios.post(`${apiUrl}/upload`, formData)
@@ -69,7 +69,7 @@ const RegistrationForm = () => {
                 console.error('Error enviando el formulario:', error);
             })
             .finally(() => {
-                setIsSubmitting(false); 
+                setIsSubmitting(false);
             });
     };
 
@@ -105,7 +105,7 @@ const RegistrationForm = () => {
                     <label htmlFor="motivation">Tus motivaciones para asistir a VML Academy</label>
                     <textarea className="form-control" id="motivation" name="motivation" rows="3" required></textarea>
                 </div>
-                <DropzoneUpload onFileDrop={handleFileDrop} /> 
+                <DropzoneUpload onFileDrop={handleFileDrop} />
 
                 <div className="form-group">
                     <input type="checkbox" className="custom-checkbox" id="terms" name="terms" required />
