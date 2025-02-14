@@ -40,7 +40,9 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 const corsOptions = {
-  origin: ['http://localhost:3000', 'http://localhost:5000', 'https://vml-academy-cmiu.vercel.app', 'https://vml-academy-cmiu.vercel.app/api', 'https://www.vmlacademy.cl'],
+  origin: ['*', 'http://localhost:3000', 'http://localhost:5000', 'https://vml-academy-cmiu.vercel.app', 'https://vml-academy-cmiu.vercel.app/api', 'https://www.vmlacademy.cl'],
+  methods: "GET,HEAD,POST",
+  allowedHeaders: ['Content-type', 'Application/json'],
   optionsSuccessStatus: 200,
 };
 
@@ -126,8 +128,6 @@ app.post("/api/test-mongo-connection", async (req, res) => {
   } catch (error) {
     console.error("Error connecting to MongoDB:", error)
     res.status(500).json({ error: "Failed to connect to MongoDB", details: error.message })
-  } finally {
-    await client.close()
   }
 })
 
