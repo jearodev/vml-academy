@@ -183,33 +183,21 @@ const Courses = () => {
             <Row>
                 {courses.map((course, index) => (
                     <Col lg={4} md={6} sm={12} key={index} className="mb-4">
-                        <Card style={{ display: "flex", flexDirection: "column", height: "650px" }}>
+                        <Card className='programa'>
                             <div style={{ position: "relative" }}>
                                 <Card.Img
                                     variant="top"
                                     src={course.image}
                                     alt={course.title}
-                                    style={{ height: "200px", objectFit: "cover" }}
+                                    className='programa-image'
                                 />
                                 <div
-                                    style={{
-                                        position: "absolute",
-                                        top: "10px",
-                                        left: "10px",
-                                        background: "rgba(0,0,0,0.7)",
-                                        color: "white",
-                                        padding: "5px 10px",
-                                        borderRadius: "5px",
-                                        fontSize: "0.8rem",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        height: "30px",
-                                    }}
+                                    className='programa-category'
                                 >
                                     {course.category}
                                 </div>
                             </div>
-                            <Card.Body style={{ display: "flex", flexDirection: "column", flex: 1 }}>
+                            <Card.Body className='programa-body'>
                                 <div>
                                     <Card.Title>
                                         <h5>{course.title}</h5>
@@ -222,36 +210,23 @@ const Courses = () => {
                                     </div>
                                     <div className="mb-3">
                                         <strong>Imparte:</strong>
-                                        <div className="d-flex mt-2 flex-wrap justify-content-center">
+                                        <div className="imparte">
                                             {course.teachers.map((teacher, teacherIndex) => (
                                                 <div key={teacherIndex} className="me-3 mb-2 mt-2 text-center" style={{ minWidth: "100px" }}>
-                                                    <a
-                                                        href={teacher.linkedin}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        style={{ textDecoration: "none", color: "inherit" }}
+                                                    <Image
+                                                        src={teacher.image || "/placeholder.svg"}
+                                                        alt={teacher.name}
+                                                        roundedCircle
+                                                        className='imparte-image'
+                                                    />
+                                                    <div className='imparte-name'>
+                                                        {teacher.name}
+                                                    </div>
+                                                    <div
+                                                        className='imparte-job'
                                                     >
-                                                        <Image
-                                                            src={teacher.image || "/placeholder.svg"}
-                                                            alt={teacher.name}
-                                                            roundedCircle
-                                                            style={{ width: "80px", height: "80px", objectFit: "cover", aspectRatio: "16/9" }}
-                                                        />
-                                                        <div style={{ fontSize: "0.8rem", fontWeight: "bold", marginTop: "5px" }}>
-                                                            {teacher.name}
-                                                        </div>
-                                                        <div
-                                                            style={{
-                                                                fontSize: "0.7rem",
-                                                                color: "#666",
-                                                                lineHeight: "1.2",
-                                                                maxWidth: "100px",
-                                                                margin: "0 auto",
-                                                            }}
-                                                        >
-                                                            {teacher.job}
-                                                        </div>
-                                                    </a>
+                                                        {teacher.job}
+                                                    </div>
                                                 </div>
                                             ))}
                                         </div>

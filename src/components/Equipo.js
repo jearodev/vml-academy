@@ -1,7 +1,5 @@
-import React, { useState } from 'react';
-import { Card, Button, Container, Row, Col, Image } from "react-bootstrap"
-import { Linkedin } from "lucide-react"
-import useIntersectionObserver from '../hooks/useIntersectionObserver';
+import React from 'react';
+import { Container, Row, Col, Image } from "react-bootstrap"
 
 const equipos = [
   {
@@ -14,8 +12,8 @@ const equipos = [
       },
       {
         name: "Cecilia De Marchena",
-        job: "Chief People Officer",
-        image: "/images/personas/paloma_opaso.webp",
+        job: "HR Business Partner",
+        image: "/images/personas/cecilia_de_marchena.webp",
       },
       {
         name: 'Jose Antonio Varas',
@@ -24,7 +22,7 @@ const equipos = [
       },
       {
         name: 'Javier Marchant',
-        job: 'Chief Operations Office',
+        job: 'Brand Planner',
         image: '/images/personas/oriol_albella.webp',
       }
     ]
@@ -39,12 +37,12 @@ const equipos = [
       },
       {
         name: "Daisy Vera",
-        job: "Chief People Officer",
+        job: "Social Media Manager",
         image: "/images/personas/paloma_opaso.webp",
       },
       {
-        name: 'Por confirmar',
-        job: 'Chief Operations Office',
+        name: 'Gabriela Aguilar',
+        job: 'Content Creator',
         image: '/images/personas/oriol_albella.webp',
       }
     ]
@@ -53,9 +51,9 @@ const equipos = [
     equipo: "Desarrollo Web",
     miembros: [
       {
-        name: "Andres Villanueva",
+        name: "Andres Villanova",
         job: "Director de Martech",
-        image: "/images/personas/andres_villanueva.webp",
+        image: "/images/personas/andres_villanova.webp",
       },
       {
         name: "Nicolás Gaitan",
@@ -70,7 +68,7 @@ const equipos = [
       {
         name: 'Jean Rodríguez',
         job: 'Desarrollador Web',
-        image: '/images/personas/oriol_albella.webp',
+        image: '/images/personas/jean_rodriguez.webp',
       }
     ]
   }
@@ -79,14 +77,14 @@ const equipos = [
 const Equipo = () => {
 
   return (
-    <Container id="equipo" className="fade-in my-5">
+    <Container id="equipo" className={`fade-in`}>
       <h1>Nuestro Equipo</h1>
       {equipos.map((equipo, equipoIndex) => (
         <div key={equipoIndex}>
           <h3 className='mb-4' style={{ fontSize: "1.5rem", fontWeight: "500", color: "#232323" }}>{equipo.equipo}</h3>
-          <Row className='mb-4 mx-2'>
+          <Row className='mb-4'>
             {equipo.miembros.map((miembro, miembroIndex) => (
-              <Col lg={3} md={6} sm={12} key={`${equipoIndex}-${miembroIndex}`} className="mb-4">
+              <Col lg={4} md={6} sm={12} key={`${equipoIndex}-${miembroIndex}`} className="mb-4">
                 <div style={{ display: "flex", flexDirection: "row", height: "100%" }}>
                   <Image
                     src={miembro.image || "/placeholder.svg"}

@@ -33,7 +33,7 @@ const NavBar = () => {
                     <Link className="nav-link" smooth to="/#acercade" onClick={closeNavbar}>Acerca de</Link>
                     <Link className="nav-link" smooth to="/#programas" onClick={closeNavbar}>Programa</Link>
                     <Link className="nav-link" smooth to="/#aplicar" onClick={closeNavbar}>Postular</Link>
-                    <Link className="nav-link" smooth to="/equipo" onClick={closeNavbar}>Nuestro Equipo</Link>
+                    <Link className="nav-link" smooth to="/#equipo" onClick={closeNavbar}>Nuestro Equipo</Link>
                     <Link className="nav-link" smooth to="/terminos" onClick={closeNavbar}>Términos y condiciones</Link>
                 </Nav>
             </Navbar.Collapse>

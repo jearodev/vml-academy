@@ -40,7 +40,7 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 const corsOptions = {
-  origin: ['http://localhost:3000', 'http://localhost:5000', 'https://vml-academy-cmiu.vercel.app', 'https://www.vmlacademy.cl'],
+  origin: ['http://localhost:3000', 'http://localhost:5000', 'https://vml-academy-cmiu.vercel.app', 'https://vml-academy-cmiu.vercel.app/api', 'https://www.vmlacademy.cl'],
   optionsSuccessStatus: 200,
 };
 

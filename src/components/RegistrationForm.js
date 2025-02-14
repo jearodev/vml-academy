@@ -74,7 +74,7 @@ const RegistrationForm = () => {
     };
 
     return (
-        <div id="aplicar" ref={ref} className={`opacitycontainer container mt-5 ${isVisible ? 'fade-in' : ''}`}>
+        <div id="aplicar" ref={ref} className={`opacitycontainer container ${isVisible ? 'fade-in' : ''}`}>
             <h1>Postula aquí</h1>
             <form id="registrationForm" onSubmit={handleSubmit}>
                 <div className="form-row">
