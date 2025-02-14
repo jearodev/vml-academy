@@ -42,7 +42,7 @@ const RegistrationForm = () => {
         }
 
         // Utilizar la variable de entorno para la URL del backend producción
-        const apiUrl = "https://vml-academy-cmiu.vercel.app/api";
+        const apiUrl = "https://www.vmlacademy.cl/api";
         //const apiUrl = "http://localhost:5000/api";
 
         axios.post(`${apiUrl}/upload`, formData)
