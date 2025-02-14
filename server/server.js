@@ -40,13 +40,12 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 const corsOptions = {
-  origin: ['*', 'http://localhost:3000', 'http://localhost:5000', 'https://vml-academy-cmiu.vercel.app', 'https://vml-academy-cmiu.vercel.app/api', 'https://www.vmlacademy.cl'],
-  methods: "GET,HEAD,POST",
-  allowedHeaders: ['Content-type', 'Application/json'],
-  optionsSuccessStatus: 200,
+  origin: ["http://localhost:3000", "https://vml-academy-cmiu.vercel.app", "https://www.vmlacademy.cl"],
+  methods: ["GET", "HEAD", "POST"],
+  allowedHeaders: ["Content-Type"],
 };
 
-app.use(cors({ origin: '*' }));
+// app.use(cors(corsOptions)); // probar sin CORS
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -90,7 +89,6 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
   }
 });
 
-// Asegúrate de que esta ruta está antes de servir archivos estáticos
 app.get('/api/registros', async (req, res) => {
   console.log('Solicitud GET recibida en /api/registros');
   try {
@@ -103,33 +101,6 @@ app.get('/api/registros', async (req, res) => {
     res.status(500).send('Error al recuperar datos.');
   }
 });
-
-app.post("/api/test-mongo-connection", async (req, res) => {
-  try {
-    await client.connect()
-    const collection = client.db("personas").collection("vmlacademy")
-
-    const testDoc = {
-      fileName: "test_file.txt",
-      filePath: "https://example.com/test_file.txt",
-      uploadDate: new Date(),
-      userData: {
-        firstName: "Test",
-        lastName: "User",
-        email: "test@example.com",
-        university: "Test University",
-        major: "Test Major",
-        motivation: "Testing MongoDB insertion",
-      },
-    }
-
-    const result = await collection.insertOne(testDoc)
-    res.status(200).json({ message: "Test document successfully inserted into MongoDB!" })
-  } catch (error) {
-    console.error("Error connecting to MongoDB:", error)
-    res.status(500).json({ error: "Failed to connect to MongoDB", details: error.message })
-  }
-})
 
 app.use(express.static(path.join(__dirname, '../build')));
 
