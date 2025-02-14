@@ -18,6 +18,7 @@ const s3 = new S3Client({
   },
 });
 
+
 const uri = process.env.MONGO_URI;
 const client = new MongoClient(uri, {
   serverApi: {
