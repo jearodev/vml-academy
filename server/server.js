@@ -39,20 +39,14 @@ async function connectMongoDB() {
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  next();
-});
-
 const corsOptions = {
-  origin: ["http://localhost:3000", "https://vml-academy-cmiu.vercel.app", "https://www.vmlacademy.cl"],
+  origin: ["http://localhost:3000", "https://localhost:3000", "https://vml-academy-cmiu.vercel.app", "https://www.vmlacademy.cl"],
   methods: 'GET, POST, HEAD, OPTIONS',
   allowedHeaders: ['Content-type', 'Authorization'],
+  optionsSuccessStatus: 200,
 };
 
-//app.use(cors(corsOptions));
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
