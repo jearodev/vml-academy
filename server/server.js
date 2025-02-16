@@ -70,6 +70,9 @@ app.use(express.urlencoded({ extended: true }));
 // Rutas
 app.post('/api/upload', upload.single('file'), async (req, res) => {
   try {
+    // Agrega timeout específico para esta ruta
+    req.setTimeout(300000);
+
     const { file, body } = req;
 
     if (!file) {
