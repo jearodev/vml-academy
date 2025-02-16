@@ -55,6 +55,7 @@ const RegistrationForm = () => {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
+                timeout: 60000,
                 onUploadProgress: (progressEvent) => {
                     const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
                     console.log('Progreso de carga:', percentCompleted);
