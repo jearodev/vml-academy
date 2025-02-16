@@ -25,53 +25,68 @@ const RegistrationForm = () => {
         }
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
         setIsSubmitting(true);
 
-        const formData = new FormData(event.target);
+        try {
+            const formData = new FormData();
 
-        // Agregar archivo al formulario
-        if (selectedFile) {
-            formData.append('file', selectedFile);
-        }
+            // Asegúrate de que el archivo se adjunta correctamente
+            if (selectedFile) {
+                formData.append('file', selectedFile, selectedFile.name);
+                console.log('Archivo adjuntado:', selectedFile);
+            } else {
+                throw new Error('Por favor, selecciona un archivo');
+            }
 
-        // Imprimir los valores de formData para ver qué se está enviando
-        for (let [key, value] of formData.entries()) {
-            console.log(key, value);
-        }
-
-        // Utilizar la variable de entorno para la URL del backend producción
-        const apiUrl = "https://www.vmlacademy.cl/api";
-        //const apiUrl = "http://localhost:5000/api";
-
-        axios.post(`${apiUrl}/upload`, formData)
-            .then(response => {
-                // Mostrar el popup de éxito con SweetAlert
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Formulario enviado con éxito',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-
-                // Limpiar el formulario
-                event.target.reset();
-                setSelectedFile(null);
-            })
-            .catch(error => {
-                // Mostrar el popup de error con SweetAlert
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error enviando el formulario',
-                    text: error.message,
-                });
-                console.error('Error enviando el formulario:', error);
-            })
-            .finally(() => {
-                setIsSubmitting(false);
+            // Agregar los demás campos
+            const fields = ['firstName', 'lastName', 'email', 'university', 'major', 'motivation'];
+            fields.forEach(field => {
+                formData.append(field, event.target[field].value);
             });
+
+            // Log para verificar el FormData
+            for (let pair of formData.entries()) {
+                console.log('FormData:', pair[0], pair[1]);
+            }
+
+            const response = await axios.post('/api/upload', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+                onUploadProgress: (progressEvent) => {
+                    const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                    console.log('Progreso de carga:', percentCompleted);
+                }
+            });
+
+            console.log('Respuesta del servidor:', response.data);
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Formulario enviado con éxito',
+                text: response.data.message,
+            });
+
+            event.target.reset();
+            setSelectedFile(null);
+        } catch (error) {
+            console.error('Error detallado:', error);
+            console.error('Respuesta del servidor:', error.response?.data);
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Error al enviar el formulario',
+                text: error.response?.data?.error || error.message || 'Error al procesar la solicitud'
+            });
+        } finally {
+            setIsSubmitting(false);
+        }
     };
+
+
+
 
     return (
         <div id="aplicar" ref={ref} className={`opacitycontainer container ${isVisible ? 'fade-in' : ''}`}>

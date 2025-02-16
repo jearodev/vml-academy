@@ -1,15 +1,14 @@
 const express = require('express');
 const multer = require('multer');
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
-const path = require('path');
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const cors = require('cors');
 
 require('dotenv').config();
 
 const app = express();
-const port = process.env.PORT || 5000;
 
+// Configuración de S3
 const s3 = new S3Client({
   region: process.env.AWS_REGION,
   credentials: {
@@ -18,58 +17,82 @@ const s3 = new S3Client({
   },
 });
 
+// MongoDB - Usar una conexión por solicitud
+let cachedClient = null;
 
-const uri = process.env.MONGO_URI;
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
+async function connectToDatabase() {
+  if (cachedClient) {
+    return cachedClient;
   }
-});
 
-async function connectMongoDB() {
-  try {
-    await client.connect();
-    console.log("Conectado a MongoDB!");
-  } catch (error) {
-    console.error("No se pudo conectar a MongoDB:", error);
-  }
+  const client = new MongoClient(process.env.MONGO_URI, {
+    serverApi: {
+      version: ServerApiVersion.v1,
+      strict: true,
+      deprecationErrors: true,
+    }
+  });
+
+  await client.connect();
+  cachedClient = client;
+  return client;
 }
 
+// Configuración de Multer
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
+// Configuración de CORS
 const corsOptions = {
-  origin: ['*', 'http://localhost:3000', 'http://localhost:5000', 'https://vml-academy-cmiu.vercel.app', 'https://vml-academy-cmiu.vercel.app/api', 'https://www.vmlacademy.cl'],
-  methods: "GET,HEAD,POST",
-  allowedHeaders: ['Content-type', 'Application/json'],
-  optionsSuccessStatus: 200,
+  origin: (origin, callback) => {
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'https://vml-academy-cmiu.vercel.app/',
+      'https://www.vmlacademy.cl'
+    ];
+
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('No permitido por CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'OPTIONS'],
 };
 
+// Aplicar CORS como middleware
 app.use(cors(corsOptions));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Rutas
 app.post('/api/upload', upload.single('file'), async (req, res) => {
-  const { file, body } = req;
-
-  if (!file) {
-    return res.status(400).send('No se subió un archivo.');
-  }
-
-  const params = {
-    Bucket: process.env.AWS_BUCKET_NAME,
-    Key: `uploads/${Date.now()}_${file.originalname}`,
-    Body: file.buffer,
-    ContentType: file.mimetype,
-  };
-
   try {
-    const command = new PutObjectCommand(params);
-    const data = await s3.send(command);
+    const { file, body } = req;
 
+    if (!file) {
+      return res.status(400).json({ error: 'No se subió un archivo.' });
+    }
+
+    // Subir a S3
+    const params = {
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: `uploads/${Date.now()}_${file.originalname}`,
+      Body: file.buffer,
+      ContentType: file.mimetype,
+    };
+
+    const command = new PutObjectCommand(params);
+
+    console.log(command)
+    await s3.send(command);
+
+    // Guardar en MongoDB
+    const client = await connectToDatabase();
     const collection = client.db("personas").collection("vmlacademy");
+
     const doc = {
       fileName: file.originalname,
       filePath: `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${params.Key}`,
@@ -83,67 +106,39 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
         motivation: body.motivation,
       },
     };
+
     await collection.insertOne(doc);
-    res.send('Archivo y datos subidos con éxito.');
+    res.status(200).json({ message: 'Archivo y datos subidos con éxito.' });
+
   } catch (error) {
-    console.error('Error al guardar en S3 o MongoDB:', error);
-    res.status(500).send('Error al procesar tu solicitud.');
+    console.error('Error:', error);
+    res.status(500).json({
+      error: 'Error al procesar tu solicitud',
+      message: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 });
 
-// Asegúrate de que esta ruta está antes de servir archivos estáticos
 app.get('/api/registros', async (req, res) => {
-  console.log('Solicitud GET recibida en /api/registros');
   try {
+    const client = await connectToDatabase();
     const collection = client.db("personas").collection("vmlacademy");
     const files = await collection.find({}).toArray();
-    console.log('Datos recuperados:', files);
     res.json(files);
   } catch (error) {
-    console.error('Error al recuperar datos de MongoDB:', error);
-    res.status(500).send('Error al recuperar datos.');
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Error al recuperar datos.' });
   }
 });
 
-app.post("/api/test-mongo-connection", async (req, res) => {
-  try {
-    await client.connect()
-    const collection = client.db("personas").collection("vmlacademy")
-
-    const testDoc = {
-      fileName: "test_file.txt",
-      filePath: "https://example.com/test_file.txt",
-      uploadDate: new Date(),
-      userData: {
-        firstName: "Test",
-        lastName: "User",
-        email: "test@example.com",
-        university: "Test University",
-        major: "Test Major",
-        motivation: "Testing MongoDB insertion",
-      },
-    }
-
-    const result = await collection.insertOne(testDoc)
-    res.status(200).json({ message: "Test document successfully inserted into MongoDB!" })
-  } catch (error) {
-    console.error("Error connecting to MongoDB:", error)
-    res.status(500).json({ error: "Failed to connect to MongoDB", details: error.message })
-  }
-})
-
-app.use(express.static(path.join(__dirname, '../build')));
-
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../build', 'index.html'));
+// Middleware de error global
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).json({
+    error: 'Error interno del servidor',
+    message: process.env.VERCEL_ENV === 'development' ? err.message : undefined
+  });
 });
 
-// app.listen(port, () => {
-//   console.log(`Servidor escuchando en http://localhost:${port}`);
-//   connectMongoDB();
-// });
-
-process.on('SIGINT', async () => {
-  await client.close();
-  process.exit();
-});
+// Exportar la aplicación para Vercel
+module.exports = app;
