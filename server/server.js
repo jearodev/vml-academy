@@ -85,6 +85,8 @@ const validateUpload = (req, res, next) => {
 // Rutas
 app.post("/api/upload", upload.single("file"), validateUpload, async (req, res) => {
   try {
+    console.log(process.env.AWS_REGION)
+    console.log(process.env.AWS_BUCKET_NAME)
     const { file, body } = req
 
     // Subir a S3 de forma asíncrona
