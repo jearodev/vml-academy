@@ -1,21 +1,23 @@
-import express from "express"
-import multer from "multer"
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3"
-import { MongoClient, ServerApiVersion } from "mongodb"
-import cors from "cors"
-import compression from "compression"
-import NodeCache from "node-cache"
+const express = require('express');
+const multer = require('multer');
+const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
+const { MongoClient, ServerApiVersion } = require('mongodb');
+const compression = require("compression")
+const NodeCache = require("node-cache")
+const cors = require('cors');
 
-const app = express()
+require('dotenv').config();
 
-// S3 Configuration
+const app = express();
+
+// Configuración de S3
 const s3 = new S3Client({
   region: process.env.AWS_REGION,
   credentials: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   },
-})
+});
 
 // MongoDB Connection
 let cachedClient = null
@@ -41,48 +43,70 @@ async function connectToDatabase() {
   return { client, db }
 }
 
-// Multer Configuration
-const storage = multer.memoryStorage()
-const upload = multer({ storage: storage, limits: { fileSize: 5 * 1024 * 1024 } })
+// Configuración de Multer
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
-// CORS Configuration
+// Configuración de CORS
 const corsOptions = {
-  origin: ["http://localhost:3000", "https://vml-academy-cmiu.vercel.app/", "https://www.vmlacademy.cl"],
-  credentials: true,
-  methods: ["GET", "POST", "OPTIONS"],
-}
+  origin: (origin, callback) => {
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'https://vml-academy-cmiu.vercel.app/',
+      'https://www.vmlacademy.cl'
+    ];
 
-app.use(cors(corsOptions))
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('No permitido por CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'OPTIONS'],
+};
+
+// Aplicar CORS como middleware
+app.use(cors(corsOptions));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(compression())
 
 // Inicializar caché
-const cache = new NodeCache({ stdTTL: 600 })
+const cache = new NodeCache({ stdTTL: 600 }) // Caché por 10 minutos
 
 // Middleware para validación temprana
 const validateUpload = (req, res, next) => {
   if (!req.file) {
     return res.status(400).json({ error: "No se subió un archivo." })
   }
+  if (req.file.size > 5 * 1024 * 1024) {
+    // 5MB limit
+    return res.status(400).json({ error: "El archivo es demasiado grande." })
+  }
   next()
 }
 
-// Routes
+// Cola de tareas
+const taskQueue = []
+
+// Función para procesar la cola de tareas
+async function processQueue() {
+  while (taskQueue.length > 0) {
+    const task = taskQueue.shift()
+    try {
+      await task()
+    } catch (error) {
+      console.error("Error processing task:", error)
+    }
+  }
+}
+
+// Rutas
 app.post("/api/upload", upload.single("file"), validateUpload, async (req, res) => {
   const { file, body } = req
 
   try {
-    // Subir a S3 de forma asíncrona
-    const s3UploadPromise = s3.send(
-      new PutObjectCommand({
-        Bucket: process.env.AWS_BUCKET_NAME,
-        Key: `uploads/${Date.now()}_${file.originalname}`,
-        Body: file.buffer,
-        ContentType: file.mimetype,
-      }),
-    )
-
     // Preparar documento para MongoDB
     const doc = {
       fileName: file.originalname,
@@ -101,14 +125,24 @@ app.post("/api/upload", upload.single("file"), validateUpload, async (req, res) 
     // Conectar a la base de datos e insertar documento
     const { db } = await connectToDatabase()
     const collection = db.collection("vmlacademy")
-    const dbInsertPromise = collection.insertOne(doc)
+    await collection.insertOne(doc)
 
-    // Esperar a que ambas operaciones se completen con un tiempo límite
-    const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 9000))
+    // Agregar la tarea de subida a S3 a la cola
+    taskQueue.push(async () => {
+      await s3.send(
+        new PutObjectCommand({
+          Bucket: process.env.AWS_BUCKET_NAME,
+          Key: `uploads/${Date.now()}_${file.originalname}`,
+          Body: file.buffer,
+          ContentType: file.mimetype,
+        }),
+      )
+    })
 
-    await Promise.race([Promise.all([s3UploadPromise, dbInsertPromise]), timeout])
+    // Iniciar el procesamiento de la cola en segundo plano
+    processQueue()
 
-    res.status(200).json({ message: "Archivo y datos subidos con éxito." })
+    res.status(200).json({ message: "Archivo y datos recibidos. Se procesarán en breve." })
   } catch (error) {
     console.error("Error:", error)
     res.status(500).json({
@@ -127,7 +161,7 @@ app.get("/api/registros", async (req, res) => {
     }
 
     // Si no están en caché, obtener de la base de datos
-    const { db } = await connectToDatabase()
+    const db = await connectToDatabase()
     const collection = db.collection("vmlacademy")
     const files = await collection.find({}).toArray()
 
@@ -141,14 +175,14 @@ app.get("/api/registros", async (req, res) => {
   }
 })
 
-// Global error middleware
+// Middleware de error global
 app.use((err, req, res, next) => {
-  console.error(err)
+  console.error(err);
   res.status(500).json({
-    error: "Error interno del servidor",
-    message: process.env.VERCEL_ENV === "development" ? err.message : undefined,
-  })
-})
+    error: 'Error interno del servidor',
+    message: process.env.VERCEL_ENV === 'development' ? err.message : undefined
+  });
+});
 
-export default app
-
+// Exportar la aplicación para Vercel
+module.exports = app;
