@@ -5,7 +5,7 @@ const Footer = () => {
     return (
         <footer className="text-center mt-5 py-4">
             <div className='redesfooter'>
-                <a href="https://www.instagram.com/vml_global/" target="_blank" rel="noopener noreferrer" className="mx-2">
+                <a href="https://www.instagram.com/vml_chile/" target="_blank" rel="noopener noreferrer" className="mx-2">
                     <FaInstagram size={24} />
                 </a>
                 <a href="https://www.linkedin.com/company/vml/" target="_blank" rel="noopener noreferrer" className="mx-2">

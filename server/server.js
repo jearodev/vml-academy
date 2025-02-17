@@ -47,7 +47,7 @@ const corsOptions = {
   origin: (origin, callback) => {
     const allowedOrigins = [
       'http://localhost:3000',
-      'https://vml-academy-cmiu.vercel.app/',
+      'https://vml-academy-cmiu.vercel.app',
       'https://www.vmlacademy.cl'
     ];
 
