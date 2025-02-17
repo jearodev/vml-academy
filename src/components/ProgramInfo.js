@@ -22,7 +22,7 @@ const ProgramInfo = () => {
             <div className='fechalugar container mt-3'>
                 <div className='fechalugarleft col-md-6 zoom'>
                     <h3>Fechas:</h3>
-                    <p>18 de marzo a 5 de abril</p>
+                    <p>18 de marzo a 1 de abril</p>
                     <p>Martes y jueves, de 17:00 a 19:00 hrs.</p>
                 </div>
 

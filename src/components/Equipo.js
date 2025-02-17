@@ -11,24 +11,25 @@ const equipos = [
         image: "/images/personas/paloma_opaso.webp",
       },
       {
-        name: "Cecilia De Marchena",
-        job: "HR Business Partner",
-        image: "/images/personas/cecilia_de_marchena.webp",
+        name: 'Javier Marchant',
+        job: 'Brand Planner',
+        image: '/images/personas/oriol_albella.webp',
       },
       {
         name: 'Jose Antonio Varas',
         job: 'Chief Strategy Officer',
         image: '/images/personas/jose_antonio_varas.webp',
       },
+
       {
-        name: 'Javier Marchant',
-        job: 'Brand Planner',
-        image: '/images/personas/oriol_albella.webp',
+        name: "Cecilia De Marchena",
+        job: "HR Business Partner",
+        image: "/images/personas/cecilia_de_marchena.webp",
       }
     ]
   },
   {
-    equipo: "Contenido comunicaciones",
+    equipo: "Contenido Comunicaciones",
     miembros: [
       {
         name: "Jaime Cano",
@@ -84,7 +85,7 @@ const Equipo = () => {
           <h3 className='mb-4' style={{ fontSize: "1.5rem", fontWeight: "500", color: "#232323" }}>{equipo.equipo}</h3>
           <Row className='mb-4'>
             {equipo.miembros.map((miembro, miembroIndex) => (
-              <Col lg={4} md={6} sm={12} key={`${equipoIndex}-${miembroIndex}`} className="mb-4">
+              <Col lg={3} md={6} sm={12} key={`${equipoIndex}-${miembroIndex}`} className="mb-4">
                 <div style={{ display: "flex", flexDirection: "row", height: "100%" }}>
                   <Image
                     src={miembro.image || "/placeholder.svg"}
