@@ -38,12 +38,12 @@ const equipos = [
       {
         name: "Daisy Vera",
         job: "Social Media Manager",
-        image: "/images/personas/paloma_opaso.webp",
+        image: "/images/personas/daisy_vera.webp",
       },
       {
         name: 'Gabriela Aguilar',
         job: 'Content Creator',
-        image: '/images/personas/oriol_albella.webp',
+        image: '/images/personas/gabriela_aguilar.webp',
       }
     ]
   },
