@@ -26,8 +26,6 @@ async function connectToDatabase() {
   if (db) return db
 
   const client = new MongoClient(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
     serverApi: {
       version: ServerApiVersion.v1,
       strict: true,
