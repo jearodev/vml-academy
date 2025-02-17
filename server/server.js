@@ -20,11 +20,10 @@ const s3 = new S3Client({
 });
 
 // MongoDB Connection
-let cachedClient = null
-let cachedDb = null
+let db = null
 
 async function connectToDatabase() {
-  if (cachedDb) return { client: cachedClient, db: cachedDb }
+  if (db) return db
 
   const client = new MongoClient(process.env.MONGO_URI, {
     serverApi: {
@@ -35,12 +34,8 @@ async function connectToDatabase() {
   })
 
   await client.connect()
-  const db = client.db("personas")
-
-  cachedClient = client
-  cachedDb = db
-
-  return { client, db }
+  db = client.db("personas")
+  return db
 }
 
 // Configuración de Multer
@@ -87,26 +82,23 @@ const validateUpload = (req, res, next) => {
   next()
 }
 
-// Cola de tareas
-const taskQueue = []
-
-// Función para procesar la cola de tareas
-async function processQueue() {
-  while (taskQueue.length > 0) {
-    const task = taskQueue.shift()
-    try {
-      await task()
-    } catch (error) {
-      console.error("Error processing task:", error)
-    }
-  }
-}
-
 // Rutas
 app.post("/api/upload", upload.single("file"), validateUpload, async (req, res) => {
-  const { file, body } = req
-
   try {
+    console.log(process.env.AWS_REGION)
+    console.log(process.env.AWS_BUCKET_NAME)
+    const { file, body } = req
+
+    // Subir a S3 de forma asíncrona
+    const s3UploadPromise = s3.send(
+      new PutObjectCommand({
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: `uploads/${Date.now()}_${file.originalname}`,
+        Body: file.buffer,
+        ContentType: file.mimetype,
+      }),
+    )
+
     // Preparar documento para MongoDB
     const doc = {
       fileName: file.originalname,
@@ -123,26 +115,14 @@ app.post("/api/upload", upload.single("file"), validateUpload, async (req, res) 
     }
 
     // Conectar a la base de datos e insertar documento
-    const { db } = await connectToDatabase()
+    const db = await connectToDatabase()
     const collection = db.collection("vmlacademy")
-    await collection.insertOne(doc)
+    const dbInsertPromise = collection.insertOne(doc)
 
-    // Agregar la tarea de subida a S3 a la cola
-    taskQueue.push(async () => {
-      await s3.send(
-        new PutObjectCommand({
-          Bucket: process.env.AWS_BUCKET_NAME,
-          Key: `uploads/${Date.now()}_${file.originalname}`,
-          Body: file.buffer,
-          ContentType: file.mimetype,
-        }),
-      )
-    })
+    // Esperar a que ambas operaciones se completen
+    await Promise.all([s3UploadPromise, dbInsertPromise])
 
-    // Iniciar el procesamiento de la cola en segundo plano
-    processQueue()
-
-    res.status(200).json({ message: "Archivo y datos recibidos. Se procesarán en breve." })
+    res.status(200).json({ message: "Archivo y datos subidos con éxito." })
   } catch (error) {
     console.error("Error:", error)
     res.status(500).json({

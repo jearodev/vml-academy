@@ -13,7 +13,7 @@ const equipos = [
       {
         name: 'Javier Marchant',
         job: 'Brand Planner',
-        image: '/images/personas/oriol_albella.webp',
+        image: '/images/personas/javier_marchant.webp',
       },
       {
         name: 'Jose Antonio Varas',
@@ -58,13 +58,13 @@ const equipos = [
       },
       {
         name: "Nicolás Gaitan",
-        job: "Chief People Officer",
-        image: "/images/personas/paloma_opaso.webp",
+        job: "Digital Project Manager",
+        image: "/images/personas/nicolas_gaitan.webp",
       },
       {
         name: 'Karin Boettiger',
-        job: 'Chief Operations Office',
-        image: '/images/personas/oriol_albella.webp',
+        job: 'Head of Digital Production',
+        image: '/images/personas/karin_boettiger.webp',
       },
       {
         name: 'Jean Rodríguez',

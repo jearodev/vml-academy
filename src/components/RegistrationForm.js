@@ -127,7 +127,7 @@ const RegistrationForm = () => {
                     <label htmlFor="terms">Acepto los términos y condiciones</label><Link to="/terminos" className="btn btn-link">- Leer términos y condiciones</Link>
                 </div>
 
-                <button type="submit" id="aplicarbutton" className="boton btn btn-primary" disabled={isSubmitting}>Aplicar</button>
+                <button type="submit" id="aplicarbutton" className="boton btn btn-primary" disabled={isSubmitting}>Postular</button>
 
             </form>
         </div>
