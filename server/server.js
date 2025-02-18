@@ -85,15 +85,19 @@ const validateUpload = (req, res, next) => {
 // Rutas
 app.post("/api/upload", upload.single("file"), validateUpload, async (req, res) => {
   try {
-    console.log(process.env.AWS_REGION)
-    console.log(process.env.AWS_BUCKET_NAME)
     const { file, body } = req
+
+    // Formatear el nombre del archivo
+    const formattedFileName = file.originalname.replace(/\s+/g, "_")
+
+    // Generar una clave única para S3
+    const s3Key = `uploads/${Date.now()}_${formattedFileName}`
 
     // Subir a S3 de forma asíncrona
     const s3UploadPromise = s3.send(
       new PutObjectCommand({
         Bucket: process.env.AWS_BUCKET_NAME,
-        Key: `uploads/${Date.now()}_${file.originalname}`,
+        Key: s3Key,
         Body: file.buffer,
         ContentType: file.mimetype,
       }),
@@ -101,8 +105,8 @@ app.post("/api/upload", upload.single("file"), validateUpload, async (req, res) 
 
     // Preparar documento para MongoDB
     const doc = {
-      fileName: file.originalname,
-      filePath: `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/uploads/${Date.now()}_${file.originalname}`,
+      fileName: formattedFileName,
+      filePath: `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/uploads/${s3Key}`,
       uploadDate: new Date(),
       userData: {
         firstName: body.firstName,
