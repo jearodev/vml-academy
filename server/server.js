@@ -82,16 +82,36 @@ const validateUpload = (req, res, next) => {
   next()
 }
 
+// Función para generar un código aleatorio de 8 dígitos
+function generateRandomCode() {
+  return Math.floor(10000000 + Math.random() * 90000000).toString()
+}
+
+// Función para formatear el nombre del archivo
+function formatFileName(fileName) {
+  return fileName
+    .normalize("NFD") // Normaliza el string (descompone los caracteres acentuados)
+    .replace(/[\u0300-\u036f]/g, "") // Elimina los diacríticos
+    .replace(/[^a-zA-Z0-9.]+/g, "_") // Reemplaza caracteres especiales y espacios con _
+    .replace(/^_+|_+$/g, "") // Elimina guiones bajos al inicio y al final
+    .toLowerCase() // Convierte a minúsculas
+}
+
 // Rutas
 app.post("/api/upload", upload.single("file"), validateUpload, async (req, res) => {
   try {
+
+    // Obtener datos del archivo
     const { file, body } = req
 
     // Formatear el nombre del archivo
-    const formattedFileName = file.originalname.replace(/\s+/g, "_")
+    const formattedFileName = formatFileName(file.originalname)
+
+    // Generar un código aleatorio de 8 dígitos
+    const randomCode = generateRandomCode()
 
     // Generar una clave única para S3
-    const s3Key = `uploads/${Date.now()}_${formattedFileName}`
+    const s3Key = `uploads/${randomCode}_${formattedFileName}`
 
     // Subir a S3 de forma asíncrona
     const s3UploadPromise = s3.send(
@@ -106,7 +126,7 @@ app.post("/api/upload", upload.single("file"), validateUpload, async (req, res) 
     // Preparar documento para MongoDB
     const doc = {
       fileName: formattedFileName,
-      filePath: `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/uploads/${s3Key}`,
+      filePath: `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${s3Key}`,
       uploadDate: new Date(),
       userData: {
         firstName: body.firstName,
@@ -124,7 +144,7 @@ app.post("/api/upload", upload.single("file"), validateUpload, async (req, res) 
     const dbInsertPromise = collection.insertOne(doc)
 
     // Esperar a que ambas operaciones se completen
-    await Promise.all([s3UploadPromise, dbInsertPromise])
+    await Promise.all([dbInsertPromise, s3UploadPromise])
 
     res.status(200).json({ message: "Archivo y datos subidos con éxito." })
   } catch (error) {
