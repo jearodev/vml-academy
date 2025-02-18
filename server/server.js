@@ -5,6 +5,8 @@ const { MongoClient, ServerApiVersion } = require('mongodb');
 const compression = require("compression")
 const NodeCache = require("node-cache")
 const cors = require('cors');
+const XLSX = require('xlsx');
+const { Parser } = require('json2csv');
 
 require('dotenv').config();
 
@@ -178,6 +180,78 @@ app.get("/api/registros", async (req, res) => {
     res.status(500).json({ error: "Error al recuperar datos." })
   }
 })
+
+app.get("/api/export-csv", async (req, res) => {
+  try {
+    const db = await connectToDatabase()
+    const collection = db.collection("vmlacademy")
+    const files = await collection.find({}).toArray()
+
+    // Preparar los datos para el CSV
+    const data = files.map(file => ({
+      'Nombre del archivo': file.fileName,
+      'Ruta del archivo': file.filePath,
+      'Fecha de subida': file.uploadDate,
+      'Nombre': file.userData.firstName,
+      'Apellido': file.userData.lastName,
+      'Email': file.userData.email,
+      'Universidad': file.userData.university,
+      'Carrera': file.userData.major,
+      'Motivación': file.userData.motivation
+    }));
+
+    // Definir los campos para el CSV
+    const fields = ['Nombre del archivo', 'Ruta del archivo', 'Fecha de subida', 'Nombre', 'Apellido', 'Email', 'Universidad', 'Carrera', 'Motivación'];
+
+    const json2csvParser = new Parser({ fields });
+    const csv = json2csvParser.parse(data);
+
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename=registros.csv');
+    res.status(200).send(csv);
+  } catch (error) {
+    console.error("Error:", error)
+    res.status(500).json({ error: "Error al exportar datos a CSV." })
+  }
+});
+
+app.get("/api/export-xls", async (req, res) => {
+  try {
+    const db = await connectToDatabase()
+    const collection = db.collection("vmlacademy")
+    const files = await collection.find({}).toArray()
+
+    // Preparar los datos para el Excel
+    const data = files.map(file => ({
+      'Nombre del archivo': file.fileName,
+      'Ruta del archivo': file.filePath,
+      'Fecha de subida': file.uploadDate,
+      'Nombre': file.userData.firstName,
+      'Apellido': file.userData.lastName,
+      'Email': file.userData.email,
+      'Universidad': file.userData.university,
+      'Carrera': file.userData.major,
+      'Motivación': file.userData.motivation
+    }));
+
+    // Crear un nuevo libro de trabajo
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.json_to_sheet(data);
+
+    // Añadir la hoja al libro
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Registros");
+
+    // Generar el archivo buffer
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'buffer' });
+
+    res.setHeader('Content-Disposition', 'attachment; filename=registros.xlsx');
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.status(200).send(excelBuffer);
+  } catch (error) {
+    console.error("Error:", error)
+    res.status(500).json({ error: "Error al exportar datos a XLS." })
+  }
+});
 
 // Middleware de error global
 app.use((err, req, res, next) => {

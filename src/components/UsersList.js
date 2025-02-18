@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Login from './Login'; // Asegúrate de importar el componente Login
+import ExportButtons from './ExportButtons';
 
 const UsersList = () => {
   const [files, setFiles] = useState([]);
@@ -35,6 +36,7 @@ const UsersList = () => {
   return (
     <div className='registrados'>
       <h1>Usuarios Registrados</h1>
+      <ExportButtons />
       <ul>
         {files.length === 0 && <p>No se encontraron archivos.</p>}
         {files.map(file => (
