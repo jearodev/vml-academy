@@ -16,6 +16,7 @@ const ProgramInfo = () => {
                 <p>Como parte de nuestra cultura nos encanta compartir conocimiento, por eso lanzamos este programa que permite aprender con los mejores profesionales de la industria y compartir experiencias con otros estudiantes apasionados por la publicidad y el marketing.</p>
                 <p>El programa, dirigido a estudiantes de las carreras afines al marketing y las comunicaciones, se desarrollará en 8 clases presenciales, repartidas en 5 sesiones que serán dictados por expertos del staff senior de la agencia usando herramientas, visión de industria y casos de éxito de <strong>VML</strong>.</p>
                 <p>Las inscripciones serán gratuitas y se abrirán 25 cupos (aprox). El programa será certificado por VML a aquellos con más de un 80% de asistencia. Además, al finalizar el programa, <strong>se seleccionarán dos alumnos para una práctica remunerada de 3 meses en la agencia (meses a convenir).</strong></p>
+                <p><b>Programa dirigido a estudiantes de 3er año de universidad y superior. Inscripciones abiertas hasta 28 de febrero.</b></p>
                 <button className="boton btn btn-primary" onClick={() => document.getElementById('aplicar').scrollIntoView({ behavior: 'smooth' })}>POSTULA</button>
             </div>
 
@@ -30,7 +31,7 @@ const ProgramInfo = () => {
                     <h3>Lugar:</h3>
                     <p><strong>VML Chile</strong></p>
                     <p>Av. Providencia 111, Providencia.</p>
-                    <p>Piso 28</p>
+                    <p>Piso 28 y 29</p>
                 </div>
             </div>
         </div>

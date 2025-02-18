@@ -7,7 +7,7 @@ const equipos = [
     miembros: [
       {
         name: "Paloma Opaso",
-        job: "Chief Executive Officer",
+        job: "Chief People Officer",
         image: "/images/personas/paloma_opaso.webp",
       },
       {
@@ -20,7 +20,6 @@ const equipos = [
         job: 'Chief Strategy Officer',
         image: '/images/personas/jose_antonio_varas.webp',
       },
-
       {
         name: "Cecilia De Marchena",
         job: "HR Business Partner",

@@ -12,7 +12,7 @@ const Footer = () => {
                     <FaLinkedin size={24} />
                 </a>
             </div>
-            <p className='contactofooter'>Contacto - <a href="mailto:recepcion.uy@vml.com">contacto@vml.com</a></p>
+            <p className='contactofooter'>Contacto - <a href="mailto:talent@vml.com">talent@vml.com</a></p>
 
             <p>&copy; 2025 VML Academy. Todos los derechos reservados.</p>
         </footer>

@@ -4,11 +4,11 @@ import { Card, Container, Row, Col, Image } from 'react-bootstrap';
 
 const courses = [
     {
-        title: 'Explorando la publicidad de hoy y mañana',
+        title: 'Introducción a VML Chile',
         description: 'La industria publicitaria está en constante cambio, y en este módulo te invitamos a explorar su panorama actual en Chile.',
         image: '/images/programa1.png',
         startDate: '18/03/2025',
-        category: 'Introducción',
+        category: 'Bienvenida',
         teachers: [
             {
                 name: 'Vicente Carrasco',
@@ -29,7 +29,7 @@ const courses = [
         description: 'En el mundo de la publicidad, la gestión de clientes es clave para el éxito. Este módulo te sumergirá en los desafíos de un área de cuentas en una agencia como VML.',
         image: '/images/programa2.png',
         startDate: '20/03/2025',
-        category: 'Cuentas',
+        category: 'Client Management',
         teachers: [
             {
                 name: 'Oriol Albella',
