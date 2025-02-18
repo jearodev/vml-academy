@@ -73,10 +73,9 @@ const UsersList = () => {
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value)
-                setCurrentPage(1) // Reset to first page on search
+                setCurrentPage(1)
               }}
             />
-            <FaSearch className="position-absolute top-50 end-0 translate-middle-y me-3 text-muted" />
           </Form.Group>
         </Col>
       </Row>
