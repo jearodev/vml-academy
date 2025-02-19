@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Container, Row, Col, Card, Form, Button, Spinner, Pagination } from "react-bootstrap"
-import { FaEnvelope, FaUniversity, FaGraduationCap, FaBook, FaSearch } from "react-icons/fa"
+import { FaEnvelope, FaUniversity, FaGraduationCap, FaBook } from "react-icons/fa"
 import Login from "./Login"
 import ExportButtons from "./ExportButtons"
 

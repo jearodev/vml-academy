@@ -158,6 +158,30 @@ app.post("/api/upload", upload.single("file"), validateUpload, async (req, res) 
   }
 })
 
+app.get("/api/check-email", async (req, res) => {
+  try {
+    const { email } = req.query;
+
+    if (!email) {
+      return res.status(400).json({ error: "Email no proporcionado" });
+    }
+
+    const db = await connectToDatabase();
+    const collection = db.collection("vmlacademy");
+
+    const existingUser = await collection.findOne({ "userData.email": email });
+
+    if (existingUser) {
+      return res.status(409).json({ error: "El email ya está registrado" });
+    }
+
+    res.status(200).json({ message: "Email disponible" });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Error al verificar el email" });
+  }
+});
+
 app.get("/api/registros", async (req, res) => {
   try {
     // Verificar si los datos están en caché

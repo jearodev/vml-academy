@@ -1,17 +1,58 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import DropzoneUpload from './DropzoneUpload';
 import useIntersectionObserver from '../hooks/useIntersectionObserver';
 import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import { Spinner } from 'react-bootstrap';
 
 const RegistrationForm = () => {
     const [isVisible, setIsVisible] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [emailError, setEmailError] = useState('');
+    const [isFormValid, setIsFormValid] = useState(false);
+    const [formData, setFormData] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        university: '',
+        major: '',
+        motivation: '',
+        terms: false
+    });
     const ref = useIntersectionObserver(setIsVisible);
 
     const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+
+    const validateForm = () => {
+        const isValid =
+            formData.firstName.trim() !== '' &&
+            formData.lastName.trim() !== '' &&
+            formData.email.trim() !== '' &&
+            formData.university.trim() !== '' &&
+            formData.major.trim() !== '' &&
+            formData.motivation.trim() !== '' &&
+            formData.terms &&
+            selectedFile !== null &&
+            emailError === '';
+
+        setIsFormValid(isValid);
+    };
+
+    useEffect(() => {
+        validateForm();
+    }, [formData]);
+
+
+    const handleInputChange = (event) => {
+        const { name, value, type, checked } = event.target;
+        setFormData(prevData => ({
+            ...prevData,
+            [name]: type === 'checkbox' ? checked : value
+        }));
+    };
 
     const handleFileDrop = (file) => {
         if (file.size > MAX_FILE_SIZE) {
@@ -20,38 +61,57 @@ const RegistrationForm = () => {
                 title: 'Archivo demasiado grande',
                 text: `El archivo seleccionado supera el tamaño máximo permitido de 5 MB. Por favor, selecciona un archivo más pequeño.`,
             });
+            setSelectedFile(null);
         } else {
             setSelectedFile(file);
+        }
+    };
+
+    const checkEmail = async (email) => {
+        try {
+            const response = await axios.get(`/api/check-email?email=${email}`);
+            setEmailError('');
+            return true;
+        } catch (error) {
+            if (error.response && error.response.status === 409) {
+                setEmailError('Este email ya está registrado.');
+                return false;
+            }
+            console.error('Error al verificar el email:', error);
+            return false;
         }
     };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         setIsSubmitting(true);
+        setIsLoading(true); // Activar el spinner
+
+        const isEmailValid = await checkEmail(formData.email);
+
+        if (!isEmailValid) {
+            setIsSubmitting(false);
+            setIsLoading(false);
+            return;
+        }
 
         try {
-            const formData = new FormData();
+            const formDataToSend = new FormData();
 
-            // Asegúrate de que el archivo se adjunta correctamente
             if (selectedFile) {
-                formData.append('file', selectedFile, selectedFile.name);
+                formDataToSend.append('file', selectedFile, selectedFile.name);
                 console.log('Archivo adjuntado:', selectedFile);
             } else {
                 throw new Error('Por favor, selecciona un archivo');
             }
 
-            // Agregar los demás campos
-            const fields = ['firstName', 'lastName', 'email', 'university', 'major', 'motivation'];
-            fields.forEach(field => {
-                formData.append(field, event.target[field].value);
+            Object.keys(formData).forEach(key => {
+                if (key !== 'terms') {
+                    formDataToSend.append(key, formData[key]);
+                }
             });
 
-            // Log para verificar el FormData
-            for (let pair of formData.entries()) {
-                console.log('FormData:', pair[0], pair[1]);
-            }
-
-            const response = await axios.post('/api/upload', formData, {
+            const response = await axios.post('/api/upload', formDataToSend, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -69,8 +129,18 @@ const RegistrationForm = () => {
                 text: response.data.message,
             });
 
-            event.target.reset();
+            // Resetear el formulario
+            setFormData({
+                firstName: '',
+                lastName: '',
+                email: '',
+                university: '',
+                major: '',
+                motivation: '',
+                terms: false
+            });
             setSelectedFile(null);
+            setEmailError('');
         } catch (error) {
             console.error('Error detallado:', error);
             console.error('Respuesta del servidor:', error.response?.data);
@@ -82,11 +152,9 @@ const RegistrationForm = () => {
             });
         } finally {
             setIsSubmitting(false);
+            setIsLoading(false); // Desactivar el spinner
         }
     };
-
-
-
 
     return (
         <div id="aplicar" ref={ref} className={`opacitycontainer container ${isVisible ? 'fade-in' : ''}`}>
@@ -95,40 +163,115 @@ const RegistrationForm = () => {
                 <div className="form-row">
                     <div className="form-group col-md-6">
                         <label htmlFor="firstName">Nombre</label>
-                        <input type="text" className="form-control" id="firstName" name="firstName" required />
+                        <input
+                            type="text"
+                            className="form-control"
+                            id="firstName"
+                            name="firstName"
+                            value={formData.firstName}
+                            onChange={handleInputChange}
+                            required
+                        />
                     </div>
                     <div className="form-group col-md-6">
                         <label htmlFor="lastName">Apellido</label>
-                        <input type="text" className="form-control" id="lastName" name="lastName" required />
+                        <input
+                            type="text"
+                            className="form-control"
+                            id="lastName"
+                            name="lastName"
+                            value={formData.lastName}
+                            onChange={handleInputChange}
+                            required
+                        />
                     </div>
                 </div>
                 <div className="form-group">
                     <label htmlFor="email">Correo Electrónico</label>
-                    <input type="email" className="form-control" id="email" name="email" required />
+                    <input
+                        type="email"
+                        className={`form-control ${emailError ? 'is-invalid' : ''}`}
+                        id="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        onBlur={(e) => checkEmail(e.target.value)}
+                        required
+                    />
+                    {emailError && <div className="invalid-feedback">{emailError}</div>}
                 </div>
                 <div className="form-row">
                     <div className="form-group col-md-6">
                         <label htmlFor="university">Universidad</label>
-                        <input type="text" className="form-control" id="university" name="university" required />
+                        <input
+                            type="text"
+                            className="form-control"
+                            id="university"
+                            name="university"
+                            value={formData.university}
+                            onChange={handleInputChange}
+                            required
+                        />
                     </div>
                     <div className="form-group col-md-6">
                         <label htmlFor="major">Carrera</label>
-                        <input type="text" className="form-control" id="major" name="major" required />
+                        <input
+                            type="text"
+                            className="form-control"
+                            id="major"
+                            name="major"
+                            value={formData.major}
+                            onChange={handleInputChange}
+                            required
+                        />
                     </div>
                 </div>
                 <div className="form-group">
                     <label htmlFor="motivation">Tus motivaciones para asistir a VML Academy</label>
-                    <textarea className="form-control" id="motivation" name="motivation" rows="3" required></textarea>
+                    <textarea
+                        className="form-control"
+                        id="motivation"
+                        name="motivation"
+                        rows="3"
+                        value={formData.motivation}
+                        onChange={handleInputChange}
+                        required
+                    ></textarea>
                 </div>
                 <DropzoneUpload onFileDrop={handleFileDrop} />
 
                 <div className="form-group">
-                    <input type="checkbox" className="custom-checkbox" id="terms" name="terms" required />
-                    <label htmlFor="terms">Acepto los términos y condiciones</label><Link to="/terminos" className="btn btn-link">- Leer términos y condiciones</Link>
+                    <input
+                        type="checkbox"
+                        className="custom-checkbox"
+                        id="terms"
+                        name="terms"
+                        checked={formData.terms}
+                        onChange={handleInputChange}
+                        required
+                    />
+                    <label htmlFor="terms">Acepto los términos y condiciones</label>
+                    <Link to="/terminos" className="btn btn-link">- Leer términos y condiciones</Link>
                 </div>
 
-                <button type="submit" id="aplicarbutton" className="boton btn btn-primary" disabled={isSubmitting}>Postular</button>
-
+                <button
+                    type="submit"
+                    id="aplicarbutton"
+                    className="boton btn btn-primary d-flex align-items-center justify-content-center"
+                    disabled={isSubmitting || !isFormValid}
+                >
+                    {isLoading && (
+                        <Spinner
+                            as="span"
+                            animation="border"
+                            size="sm"
+                            role="status"
+                            aria-hidden="true"
+                            className="me-2"
+                        />
+                    )}
+                    <span>{isLoading ? 'Enviando...' : 'Postular'}</span>
+                </button>
             </form>
         </div>
     );
