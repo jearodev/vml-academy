@@ -13,8 +13,8 @@ const DropzoneUpload = ({ onFileDrop }) => {
     return (
         <div className="form-group dropzonestyle">
             <label htmlFor="file">Certificado de avance curricular (PDF, JPG, PNG, WEBP):</label>
-            <Dropzone 
-                onDrop={handleDrop} 
+            <Dropzone
+                onDrop={handleDrop}
                 accept={{
                     'application/pdf': ['.pdf'],
                     'image/jpeg': ['.jpg', '.jpeg'],
@@ -29,6 +29,8 @@ const DropzoneUpload = ({ onFileDrop }) => {
                     </div>
                 )}
             </Dropzone>
+            <p style={{ textAlign: "left" }}><i>*documento que acredite los años, semestres o cursos ya cursados.</i></p>
+
             {fileName && (
                 <div className="file-name" style={{ marginTop: '10px' }}>
                     <p>Archivo seleccionado: {fileName}</p>

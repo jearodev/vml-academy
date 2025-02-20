@@ -125,8 +125,8 @@ const RegistrationForm = () => {
 
             Swal.fire({
                 icon: 'success',
-                title: 'Formulario enviado con éxito',
-                text: response.data.message,
+                title: 'Tu postulación ha sido enviada con éxito',
+                text: "Durante la semana del 3 de marzo notificaremos a los postulantes seleccionados.",
             });
 
             // Resetear el formulario
