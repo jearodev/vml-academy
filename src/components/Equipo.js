@@ -1,83 +1,88 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
+import useIntersectionObserver from '../hooks/useIntersectionObserver';
 import { Container, Row, Col, Image } from "react-bootstrap"
 
-const equipos = [
-  {
-    equipo: "Coordinación",
-    miembros: [
-      {
-        name: "Paloma Opaso",
-        job: "Chief People Officer",
-        image: "/images/personas/paloma_opaso.webp",
-      },
-      {
-        name: 'Javier Marchant',
-        job: 'Brand Planner',
-        image: '/images/personas/javier_marchant.webp',
-      },
-      {
-        name: 'Jose Antonio Varas',
-        job: 'Chief Strategy Officer',
-        image: '/images/personas/jose_antonio_varas.webp',
-      },
-      {
-        name: "Cecilia De Marchena",
-        job: "HR Business Partner",
-        image: "/images/personas/cecilia_de_marchena.webp",
-      }
-    ]
-  },
-  {
-    equipo: "Contenido Comunicaciones",
-    miembros: [
-      {
-        name: "Jaime Cano",
-        job: "Director Creativo",
-        image: "/images/personas/jaime_cano.webp",
-      },
-      {
-        name: "Daisy Vera",
-        job: "Social Media Manager",
-        image: "/images/personas/daisy_vera.webp",
-      },
-      {
-        name: 'Gabriela Aguilar',
-        job: 'Content Creator',
-        image: '/images/personas/gabriela_aguilar.webp',
-      }
-    ]
-  },
-  {
-    equipo: "Desarrollo Web",
-    miembros: [
-      {
-        name: "Andres Villanova",
-        job: "Director de Martech",
-        image: "/images/personas/andres_villanova.webp",
-      },
-      {
-        name: "Nicolás Gaitan",
-        job: "Digital Project Manager",
-        image: "/images/personas/nicolas_gaitan.webp",
-      },
-      {
-        name: 'Karin Boettiger',
-        job: 'Head of Digital Production',
-        image: '/images/personas/karin_boettiger.webp',
-      },
-      {
-        name: 'Jean Rodríguez',
-        job: 'Desarrollador Web',
-        image: '/images/personas/jean_rodriguez.webp',
-      }
-    ]
-  }
-]
+
 
 const Equipo = () => {
+  const [isVisible, setIsVisible] = useState(false);
+  const ref = useIntersectionObserver(setIsVisible);
+
+  const equipos = [
+    {
+      equipo: "Coordinación",
+      miembros: [
+        {
+          name: "Paloma Opaso",
+          job: "Chief People Officer",
+          image: "/images/personas/paloma_opaso.webp",
+        },
+        {
+          name: 'Javier Marchant',
+          job: 'Brand Planner',
+          image: '/images/personas/javier_marchant.webp',
+        },
+        {
+          name: 'Jose Antonio Varas',
+          job: 'Chief Strategy Officer',
+          image: '/images/personas/jose_antonio_varas.webp',
+        },
+        {
+          name: "Cecilia De Marchena",
+          job: "HR Business Partner",
+          image: "/images/personas/cecilia_de_marchena.webp",
+        }
+      ]
+    },
+    {
+      equipo: "Contenido Comunicaciones",
+      miembros: [
+        {
+          name: "Jaime Cano",
+          job: "Director Creativo",
+          image: "/images/personas/jaime_cano.webp",
+        },
+        {
+          name: "Daisy Vera",
+          job: "Social Media Manager",
+          image: "/images/personas/daisy_vera.webp",
+        },
+        {
+          name: 'Gabriela Aguilar',
+          job: 'Content Creator',
+          image: '/images/personas/gabriela_aguilar.webp',
+        }
+      ]
+    },
+    {
+      equipo: "Desarrollo Web",
+      miembros: [
+        {
+          name: "Andres Villanova",
+          job: "Director de Martech",
+          image: "/images/personas/andres_villanova.webp",
+        },
+        {
+          name: "Nicolás Gaitan",
+          job: "Digital Project Manager",
+          image: "/images/personas/nicolas_gaitan.webp",
+        },
+        {
+          name: 'Karin Boettiger',
+          job: 'Head of Digital Production',
+          image: '/images/personas/karin_boettiger.webp',
+        },
+        {
+          name: 'Jean Rodríguez',
+          job: 'Desarrollador Web',
+          image: '/images/personas/jean_rodriguez.webp',
+        }
+      ]
+    }
+  ]
 
   return (
-    <Container id="equipo" className={`fade-in`}>
+    <Container id="equipo" ref={ref} className={`opacitycontainer container -mt-3 ${isVisible ? 'fade-in' : ''}`}>
       <h1>Nuestro Equipo</h1>
       {equipos.map((equipo, equipoIndex) => (
         <div key={equipoIndex}>
